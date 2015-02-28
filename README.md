@@ -7,9 +7,9 @@ The clojuare wrapper for OANDA REST API
 Clone the code and complie a jar
 
 ## Milestone
-# cover all OANDA's REST API
-# cover OANDA's Lab API
-# performance 
+### cover all OANDA's REST API
+### cover OANDA's Lab API
+### performance 
 
 
 ## Usage
