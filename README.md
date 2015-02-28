@@ -1,10 +1,16 @@
 # cloanda
 
-FIXME: description
+The clojuare wrapper for OANDA REST API
 
 ## Installation
 
-Download from http://example.com/FIXME.
+Clone the code and complie a jar
+
+## Milestone
+# cover all OANDA's REST API
+# cover OANDA's Lab API
+# performance 
+
 
 ## Usage
 
@@ -24,13 +30,10 @@ FIXME: listing of options this app accepts.
 
 ...
 
-### Any Other Sections
-### That You Think
-### Might be Useful
-
 ## License
 
-Copyright © 2015 FIXME
+Copyright © 2015 Xiaoyu
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the Eclipse Public License either version 1.0 or any later version.
+
+
