@@ -103,19 +103,13 @@
  )
 
 
-
-
-(defn get-rest-api
-  ([url] (api url "" "") )
-  ([url user password] (api url user password))
-
+(defn init-rest-api
+  ([url] (api. url "" "") )
+  ([url user password] (api. url user password))
   )
-
-
-
 
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (init-rest-api "http://api-sandbox.oanda.com"))
