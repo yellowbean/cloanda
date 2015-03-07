@@ -8,6 +8,13 @@
   )
 
 
+;;util functions
+(def opt_to_str [opt]
+  (string/join "&" (map #(str (first %) "=" (second %)) (seq opt)))
+  )
+
+
+
 (defprotocol rate_protocol
   (get-instrument-list [x])
   (get-current-price [x cur])
@@ -46,6 +53,14 @@
   (get-account-history [x a_id ])
   )
 
+(defprotocol forex_lab_protocol
+  (get-calendar [x inst period])
+  (hist-pos-ratios [x inst period])
+  (get-spreads [x inst period])
+  (get-cot [x inst])
+  (get-order-book [x inst period])
+  )
+
 
 (defrecord api [ url username password ]
   rate_protocol
@@ -66,12 +81,16 @@
   order_protocol
   (get-orders-by-account [x id]
     (client/get (str url "/v1/accounts/" id "/orders/") {:as :json}))
-  (create-order [x inst units side type expiry price opt]
+  (create-order [x inst units side type opt]
+    (let [base_cmd (str "instrument=" inst "&units=" units "&side=" side "&type=" type)
+          exe_cmd (str base_cmd (opt_to_str opt))]
+      (client/post (str url "/v1/accounts" id "/orders") {:body exe_cmd  :as :json}))
     )
   (get-order-info [x a_id o_id]
     (client/get (str url "/v1/accounts/" a_id "/orders/" o_id) {:as :json}))
   (update-order [x a_id o_id opt]
-    (client/patch (str url "/v1/accounts/" a_id "/orders/" o_id) {:as :json}))
+    (let [exe_cmd (opt_to_str opt)]
+      (client/patch (str url "/v1/accounts/" a_id "/orders/" o_id) {:body exe_cmd  :as :json})))
   (close-order [x a_id o_id]
     (client/delete (str url "/v1/accounts/" a_id "/orders/" o_id) {:as :json}))
 
@@ -81,7 +100,8 @@
   (get-trade-info [x a_id t_id]
     (client/delete (str url "/v1/accounts/" a_id "/trades/" t_id) {:as :json}))
   (update-trade [x a_id t_id opt]
-    (client/patch (str url "/v1/accounts/" a_id "/trades/" t_id) {:as :json}))
+    (let [exe_cmd (opt_to_str opt)]
+      (client/patch (str url "/v1/accounts/" a_id "/trades/" t_id) {:body exe_cmd :as :json})))
   (close-trade [x a_id t_id]
     (client/delete (str url "/v1/accounts/" a_id "/trades/" t_id) {:as :json}))
 
@@ -100,8 +120,21 @@
    (client/get (str url "/v1/accounts/" a_id "/transactions/" t_id) {:as :json}))
   (get-account-history [x a_id ]
     (client/get (str url "/v1/accounts/" a_id "/alltransactions/") {:as :json}))
- )
 
+  forex_lab_protocol
+  (get-calendar [x inst period]
+    (client/get (str url "/labs/v1/calendar?instrument=" inst "&period=" period) {:as :json}))
+  (hist-pos-ratios [x inst period]
+    (client/get (str url "/labs/v1/historical_position_ratios?instrument=" inst "&period=" period) {:as :json} ))
+  (get-spreads [x inst period]
+    (client/get (str url "/labs/v1/spreads?instrument=" inst "&period=" period) {:as :json}))
+  (get-cot [x inst]
+    (client/get (str url "/labs/v1/commitments_of_traders?instrument=" inst) {:as :json}))
+  (get-order-book [x inst period]
+    (client/get (str url "/labs/v1/orderbook_data?instrument=" inst "&period=" period)  {:as :json})
+    )
+
+ )
 
 (defn init-rest-api
   ([url] (api. url "" "") )
