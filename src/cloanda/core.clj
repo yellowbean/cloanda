@@ -61,8 +61,14 @@
   (get-order-book [x inst period])
   )
 
+(defprotocol streaming_protocol
+  (rate-stream [x a_id inst])
+  (event-stream [x])
+  )
 
-(defrecord api [ url username password ]
+
+
+(defrecord api [ url stream_url username password ]
   rate_protocol
   (get-instrument-list [x]
     (:instruments (:body (client/get (str url "/v1/instruments" ) {:as :json}))))
@@ -134,11 +140,19 @@
     (client/get (str url "/labs/v1/orderbook_data?instrument=" inst "&period=" period)  {:as :json})
     )
 
+  streaming_protocol
+  (rate-stream [x a_id inst]
+    (client/get (str stream_url "/v1/prices?accountId=" a_id "&instruments=" (string/join "%2C" inst)))
+    )
+
+  (event-stream []
+    (client/get (str stream_url "/v1/events"))
+    )
  )
 
 (defn init-rest-api
   ([url] (api. url "" "") )
-  ([url user password] (api. url user password))
+  ([url user password] (api. url stream_url user password))
   )
 
 
