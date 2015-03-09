@@ -9,10 +9,9 @@
 
 
 ;;util functions
-(def opt_to_str [opt]
+(defn opt_to_str [opt]
   (string/join "&" (map #(str (first %) "=" (second %)) (seq opt)))
   )
-
 
 
 (defprotocol rate_protocol
@@ -24,11 +23,12 @@
 (defprotocol account_protocol
   (get-accounts [x])
   (get-account-info [x id])
+  (create-account [x])
   )
 
 (defprotocol order_protocol
-  (get-orders-by-account [x id])
-  (create-order [x inst units side type expiry price opt ])
+  (get-orders-by-account [x a_id])
+  (create-order [x a_id inst units side type opt ])
   (get-order-info [x a_id o_id])
   (update-order [x a_id o_id opt])
   (close-order [x a_id o_id])
@@ -73,7 +73,8 @@
   (get-instrument-list [x]
     (:instruments (:body (client/get (str url "/v1/instruments" ) {:as :json}))))
   (get-current-price [ x cur ]
-    (:body (client/get (str url "/v1/prices?instruments=" (string/join "%2C" cur)) {:as :json} )))
+    (:body (client/get (str url "/v1/prices?instruments=" (string/join "%2C" cur)) {:as :json} ))
+    )
   (get-instrument-history [ x cur opt]
     (let [opt_str (apply str (for [i opt] (str "&" (first i) "=" (second i))))]
       (:body (client/get (str url "/v1/candles?instrument=" cur opt_str) {:as :json} ))))
@@ -83,14 +84,18 @@
     (:body (client/post (str url "/v1/accounts") {:as :json})))
   (get-account-info [x id]
     (:body (client/get (str url "/v1/accounts/" id) {:as :json})))
+  (create-account [x]
+    (:body (client/post (str url "/v1/accounts") {:as :json}))
+    )
 
   order_protocol
-  (get-orders-by-account [x id]
-    (client/get (str url "/v1/accounts/" id "/orders/") {:as :json}))
-  (create-order [x inst units side type opt]
+  (get-orders-by-account [x a_id]
+    (:body (client/get (str url "/v1/accounts/" a_id "/orders/") {:as :json})))
+  (create-order [x a_id inst units side type opt]
     (let [base_cmd (str "instrument=" inst "&units=" units "&side=" side "&type=" type)
           exe_cmd (str base_cmd (opt_to_str opt))]
-      (client/post (str url "/v1/accounts" id "/orders") {:body exe_cmd  :as :json}))
+      (println exe_cmd)
+      (:body (client/post (str url "/v1/accounts/" a_id "/orders") {:form-params exe_cmd  :as :json})))
     )
   (get-order-info [x a_id o_id]
     (client/get (str url "/v1/accounts/" a_id "/orders/" o_id) {:as :json}))
@@ -145,18 +150,17 @@
     (client/get (str stream_url "/v1/prices?accountId=" a_id "&instruments=" (string/join "%2C" inst)))
     )
 
-  (event-stream []
+  (event-stream [x]
     (client/get (str stream_url "/v1/events"))
     )
  )
 
 (defn init-rest-api
-  ([url] (api. url "" "") )
-  ([url user password] (api. url stream_url user password))
+  ([url stream_url] (api. url stream_url "" "") )
+  ([url stream_url user password] (api. url stream_url user password))
   )
 
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (init-rest-api "http://api-sandbox.oanda.com"))
+(defn -main [ &args]
+  (init-rest-api "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com/")
+  )
