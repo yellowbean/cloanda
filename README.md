@@ -6,12 +6,6 @@ The clojuare wrapper for OANDA REST API
 
 Clone the code and complie a jar
 
-## Milestone
-### cover all OANDA's REST API
-### cover OANDA's Lab API
-### performance 
-
-
 ## Usage
 
 FIXME: explanation
@@ -24,19 +18,17 @@ FIXME: explanation
     ;;get current price of instrument "EUR_USD"
     (get-current-price api "EUR_USD")
 
+## Reference
 
 
 ## Options
 
 FIXME: listing of options this app accepts.
 
-## Examples
-
-...
+## Log
 
 ### Bugs
-
-...
+Please drop an eamil to always.zhang@gmail.com
 
 ## License
 
