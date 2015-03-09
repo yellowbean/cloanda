@@ -18,6 +18,14 @@ FIXME: explanation
 
     $ java -jar cloanda-0.1.0-standalone.jar [args]
 
+### Initiate a api instance
+    (def api (init-rest-api "http://api-sandbox.oanda.com" "https://api-fxpractice.oanda.com" )))
+### Call functions adhere to api instance
+    ;;get current price of instrument "EUR_USD"
+    (get-current-price api "EUR_USD")
+
+
+
 ## Options
 
 FIXME: listing of options this app accepts.
