@@ -140,18 +140,17 @@
   (get-cot [x inst]
     (:body (client/get (str url "/labs/v1/commitments_of_traders?instrument=" inst) {:as :json})))
   (get-order-book [x inst period]
-    (:body (client/get (str url "/labs/v1/orderbook_data?instrument=" inst "&period=" period)  {:as :json}))
+    (:Body (client/get (str url "/labs/v1/orderbook_data?instrument=" inst "&period=" period)  {:as :json}))
     )
 
   streaming_protocol
   (rate-stream [x a_id inst]
-    (:body (client/get (str stream_url "/v1/prices?accountId=" a_id "&instruments=" (string/join "%2C" inst))))
-    )
+    (:body (client/get (str stream_url "/v1/prices?accountId=" a_id "&instruments=" (string/join "%2C" inst)) {:as :stream })))
 
   (event-stream [x]
-    (:body (client/get (str stream_url "/v1/events")))
+    (:body (client/get (str stream_url "/v1/events") {:as :stream }))
     )
- )
+  )
 
 (defn init-rest-api
   ([url stream_url] (api. url stream_url "" "") )
@@ -160,5 +159,5 @@
 
 
 (defn -main [ &args]
-  (init-rest-api "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com/")
+  (init-rest-api "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com")
   )
