@@ -1,16 +1,21 @@
 (ns cloanda.core
     (:require [clj-http.client :as client]
               [clojure.string :as string]
+              [clj-json.core :as json]
             ))
 
 (defmacro json-in-body [x]
-  (:body (x {:as :json}) )
+ (:body (x {:as :json}) )
   )
 
 
-;;util functions
-(defn opt_to_str [opt]
-  (string/join "&" (map #(str (first %) "=" (second %)) (seq opt)))
+(defn read-stream [x]
+  (loop [ r (.read x)
+         xs [] ]
+    (if-not (= r 10)
+      (recur (.read x) (conj xs r))
+      (string/join "" (map char  xs)))
+    )
   )
 
 
@@ -28,7 +33,7 @@
 
 (defprotocol order_protocol
   (get-orders-by-account [x a_id])
-  (create-order [x a_id inst units side type opt ])
+  (create-order [x a_id inst unit side type opt ])
   (get-order-info [x a_id o_id])
   (update-order [x a_id o_id opt])
   (close-order [x a_id o_id])
@@ -109,8 +114,8 @@
   (get-trade-info [x a_id t_id]
     (:body  (client/delete (str url "/v1/accounts/" a_id "/trades/" t_id) {:as :json})))
   (update-trade [x a_id t_id opt]
-    (let [exe_cmd (opt_to_str opt)]
-      (:body (client/patch (str url "/v1/accounts/" a_id "/trades/" t_id) {:form-params opt :as :json}))))
+
+      (:body (client/patch (str url "/v1/accounts/" a_id "/trades/" t_id) {:form-params opt :as :json})))
   (close-trade [x a_id t_id]
     (:body (client/delete (str url "/v1/accounts/" a_id "/trades/" t_id) {:as :json})))
 
@@ -160,4 +165,15 @@
 
 (defn -main [ &args]
   (init-rest-api "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com")
+  )
+
+(defn -main2 [&args]
+  (let [ api (-main "")
+        ac (get-accounts api)
+        a_id (:accountId ac)
+        r_stream (rate-stream api a_id ["EUR_USD"])
+        ]
+    (println a_id)
+    r_stream
+    )
   )
