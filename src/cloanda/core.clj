@@ -7,7 +7,11 @@
     (:import [java.io.FilterInputStream])
     )
 
+;;set headers to get UNIX format datetime
 (def opt-ux-time  {:header {"X-Accept-Datetime-Format" "UNIX"}})
+;;set auth
+(def auth {:header {"Authorization" (str "Bearer " "token")}})
+
 
 
 (defn read-stream [^java.io.FilterInputStream x]
@@ -16,8 +20,6 @@
     (if-not (= r 10)
       (recur (.read x) (conj xs r))
       (json/parse-string (string/join "" (map char xs))))))
-
-
 
 
 (defprotocol rate_protocol
