@@ -7,6 +7,7 @@
                  [clj-http "1.0.1"]
                  [clj-json "0.5.3"]
                  [org.clojure/tools.logging "0.3.1"]
+		[org.apache.commons/commons-math3 "3.5"] 
 		]
   :main ^:skip-aot cloanda.core
   :target-path "target/%s"

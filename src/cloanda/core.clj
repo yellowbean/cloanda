@@ -12,8 +12,6 @@
 ;;set auth
 (def auth {:header {"Authorization" (str "Bearer " "token")}})
 
-
-
 (defn read-stream [^java.io.FilterInputStream x]
   (loop [ r (.read x)
          xs [] ]
@@ -162,19 +160,13 @@
   )
 
 
-;
-(defn -main [ &args]
-  (init-rest-api "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com" opt-ux-time)
-  )
-
-(defn -main2 [&args]
-  (let [ api (-main "")
-        ac (get-accounts api)
-        a_id (:accountId ac)
-        r_stream (rate-stream api a_id ["EUR_USD"])
-        ]
-    (println a_id)
-    r_stream
-    )
-  )
+;(defn -main2 [&args]
+;(let [ api (-main "")
+;      ac (get-accounts api)
+;      a_id (:accountId ac)
+;      r_stream (rate-stream api a_id ["EUR_USD"])
+;]
+;  (println a_id)
+;  r_stream
+;);)
 ;
