@@ -15,6 +15,8 @@ The clojure wrapper for OANDA REST API
 ### Step 1 Initiate an api instance
     (def api (init-rest-api "http://api-sandbox.oanda.com" "https://api-fxpractice.oanda.com" )))
 
+#### Authtencation
+
 #### Options
 
 
@@ -27,13 +29,34 @@ The clojure wrapper for OANDA REST API
     (get-current-price api "EUR_USD")
 
 #### Get history prices
-    ;;get history prices of instrument "EUR_USD"
-    (get-instrument-history api "EUR_USD")
-
-
+    ;; get history prices of instrument "EUR_USD"
+    ;; by default it will return 500 periods & 5 seconds as granularity
+    (get-instrument-history api "EUR_USD" {})
     
+    ;; getting 50 periods  by passing an option map
+    (get-instrument-history api "EUR_USD" {"count" 50})
+    
+    ;; map can contains more than one parameter
+    (get-instrument-history api "EUR_USD" {"count" 50 "granularity" "D"})
+
 #### Account information
+    ;; get all accounts associate with current login
+    (get-accounts api)
+    
+    ;; get detail account information for given account id
+    (get-account-info api account_id)
+    
+    ;; create an account
+    (create-account api)
+    
 #### Order Management
+    ;; list all orders under a account
+    (get-orders-by-account api account_id)
+    
+    ;; place an buy market order
+    (create-order  account_id "EUR_USD" 100000 "buy" "market" )
+    
+    
 #### Trade Management
 #### Position Management
 #### Transaction Management

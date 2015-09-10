@@ -79,9 +79,10 @@
   (get-current-price [ x cur ]
     (:body (client/get (str url "/v1/prices?instruments=" (string/join "%2C" cur)) {:as :json :headers (:header opt)} ))
     )
-  (get-instrument-history [ x cur opt]
-    (let [opt_str (apply str (for [i opt] (str "&" (first i) "=" (second i))))]
-      (:body (client/get (str url "/v1/candles?instrument=" cur opt_str) {:as :json :headers (:header opt)} ))))
+  (get-instrument-history [ x cur p]
+    (let [opt_str (apply str (for [i p] (str "&" (first i) "=" (second i))))]
+      (:body (client/get (str url "/v1/candles?instrument=" cur opt_str) {:as :json :headers (:header opt)} )
+      )))
 
   account_protocol
   (get-accounts [x]
