@@ -20,11 +20,25 @@
       r
       (recur (next s) (conj r (+ (* alpha (first s) ) (* (- 1 alpha) (last r))))))))
 
+(defn get-sr [v]
+  (let [horizon (->(range 1 (inc (count v))) (double-array))
+        ys (double-array v)
+        sr (SimpleRegression.)]
+    (doseq [[x y] (map list horizon ys)]
+      (.addData sr x y))
+    sr)
+  )
+
+(defn get-ds [v]
+  (let [ ds (DescriptiveStatistics. (double-array v))]
+    ds)
+  )
+
+
 ;;;;;; signals
 (defn cross-over [fast slow]
   (let [ pairs (map vector fast slow)]
     (map #(- %1 %2) pairs)
-
     )
   )
 
