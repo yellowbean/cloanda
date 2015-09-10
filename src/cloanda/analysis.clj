@@ -37,10 +37,11 @@
 
 ;;;;;; signals
 (defn cross-over [fast slow]
-  (let [ pairs (map vector fast slow)]
+  (let [ pairs (map list fast slow)]
     (map #(- %1 %2) pairs)
     )
   )
+
 
 
 ;;;;;; strategy
