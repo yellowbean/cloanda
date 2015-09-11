@@ -2,13 +2,21 @@
 
 The clojure wrapper for OANDA REST API
 
+----
+- [Installation](#installation)
+- [Reference](#Reference)
+
+
+
+----
+
+
 ## Installation
 
 * Clone the code and complie a jar
 * download a jar package
 
 ## Usage
-
 
     $ java -jar cloanda-0.1.0-standalone.jar [args]
 
@@ -20,7 +28,8 @@ The clojure wrapper for OANDA REST API
 #### Options
 
 
-### Step 2 Call functions bounded to api instance
+### Reference
+Call functions bounded to api instance
 
 #### Get all avilable trading instruments
     (get-instrument-list api)
