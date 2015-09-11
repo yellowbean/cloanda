@@ -4,7 +4,7 @@ The clojure wrapper for OANDA REST API
 
 ----
 - [Installation](#installation)
-- [Reference](#Reference)
+- [Reference](#reference)
 
 
 
