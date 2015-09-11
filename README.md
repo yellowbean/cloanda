@@ -54,12 +54,54 @@ The clojure wrapper for OANDA REST API
     (get-orders-by-account api account_id)
     
     ;; place an buy market order
-    (create-order  account_id "EUR_USD" 100000 "buy" "market" )
+    (create-order api account_id "EUR_USD" 100000 "buy" "market" )
     
+    ;; getting an order info under an account
+    (get-order-info api account_id order_id)
+    
+    ;; change an order
+    (update-order api account_id order_id opt)
+    
+    ;; close an order
+    (close-order api account_id order_id)
     
 #### Trade Management
+
+    ;;
+    (get-open-trades api account_id)
+    
+    ;; 
+    (get-trade-info api account_id trade_id)
+    
+    ;;
+    (update-trade api account_id trade_id {})
+    
+    ;; close a trade by trade id
+    (close-trade api account_id trade_id)
+
 #### Position Management
+
+    ;;
+    (get-open-position api account_id)
+    
+    ;;
+    (get-position-by-inst api account_id "EUR_USD")
+    
+    ;;
+    (close-position api account_id "EUR_USD")
+
+
 #### Transaction Management
+
+    ;;
+    (get-txn-history api account_id)
+    
+    (get-txn-info api account_id txn_id)
+    
+    (get-account-history api account_id)
+
+
+
 
 ## Reference
 
