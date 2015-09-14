@@ -1,4 +1,5 @@
 (ns cloanda.analysis
+  (:require [org.clojure/tools.logging :as logging])
   (:import
    (org.apache.commons.math3.stat.descriptive DescriptiveStatistics)
    (org.apache.commons.math3.stat.regression SimpleRegression))
@@ -45,3 +46,16 @@
 
 
 ;;;;;; strategy
+
+;;; pair trading
+
+
+
+
+
+
+
+
+
+
+
