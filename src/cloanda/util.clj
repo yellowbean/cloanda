@@ -1,5 +1,9 @@
-(ns cloanda.util )
+(ns cloanda.util)
 
-(defn local-now
-  (System/currentTimeMillis)
+
+
+(defn local-now []
+  (System/currentTimeMillis )
   )
+
+(local-now)
