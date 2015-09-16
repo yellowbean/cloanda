@@ -7,10 +7,11 @@
     (:import [java.io.FilterInputStream])
     )
 
-;;set headers to get UNIX format datetime
-(def opt-ux-time  {:header {"X-Accept-Datetime-Format" "UNIX"}})
-;;set auth
-(def auth {:header {"Authorization" (str "Bearer " "token")}})
+(def gen-headers [ token datetime-format ]
+    (let [ auth (str "Bearer " token)] ; "UNIX" or "RFC3339"
+    {"Authorization" auth  "X-Accept-Datetime-Format" datetime-format}
+    )
+
 
 (defn read-stream [^java.io.FilterInputStream x]
   (loop [ r (.read x)
@@ -72,7 +73,7 @@
   (event-stream [x])
   )
 
-(defrecord api [ url stream_url username password opt ]
+(defrecord api [ url stream_url opt ]
   rate_protocol
   (get-instrument-list [x]
     (:instruments (:body (client/get (str url "/v1/instruments" ) {:as :json :headers (:header opt)} ))))
@@ -155,19 +156,6 @@
     )
 )
 
-(defn init-rest-api
-  ([url stream_url df] (api. url stream_url "" "" df) )
-  ([url stream_url user password df] (api. url stream_url user password df))
+(defn init-api
+  ([url stream_url df] (api. url stream_url df) )
   )
-
-
-;(defn -main2 [&args]
-;(let [ api (-main "")
-;      ac (get-accounts api)
-;      a_id (:accountId ac)
-;      r_stream (rate-stream api a_id ["EUR_USD"])
-;]
-;  (println a_id)
-;  r_stream
-;);)
-;
