@@ -7,7 +7,7 @@
     (:import [java.io.FilterInputStream])
     )
 
-(defn gen-headers [ token datetime-format ]
+(defn gen-headers [ ^String token ^String datetime-format ]
     (let [ auth (str "Bearer " token)] ; "UNIX" or "RFC3339"
     {"Authorization" auth  "X-Accept-Datetime-Format" datetime-format}
     ))
@@ -76,10 +76,11 @@
 (defrecord api [ url stream_url opt ]
   rate_protocol
   (get-instrument-list [x]
-    (:instruments (:body (client/get (str url "/v1/instruments" ) {:as :json :headers (:header opt)} ))))
+    (:body (client/get (str url "/v1/instruments" ) {:as :json :headers (:header opt)} )))
+
   (get-current-price [ x cur ]
-    (:body (client/get (str url "/v1/prices?instruments=" (string/join "%2C" cur)) {:as :json :headers (:header opt)} ))
-    )
+    (:body (client/get (str url "/v1/prices?instruments=" (string/join "%2C" cur)) {:as :json :headers (:header opt)} )))
+
   (get-instrument-history [ x cur p]
     (let [opt_str (apply str (for [i p] (str "&" (first i) "=" (second i))))]
       (:body (client/get (str url "/v1/candles?instrument=" cur opt_str) {:as :json :headers (:header opt)} )
