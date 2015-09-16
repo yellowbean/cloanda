@@ -7,10 +7,10 @@
     (:import [java.io.FilterInputStream])
     )
 
-(def gen-headers [ token datetime-format ]
+(defn gen-headers [ token datetime-format ]
     (let [ auth (str "Bearer " token)] ; "UNIX" or "RFC3339"
     {"Authorization" auth  "X-Accept-Datetime-Format" datetime-format}
-    )
+    ))
 
 
 (defn read-stream [^java.io.FilterInputStream x]
