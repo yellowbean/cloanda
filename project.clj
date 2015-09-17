@@ -1,6 +1,6 @@
 (defproject cloanda "0.1.0-SNAPSHOT"
   :description "A clojure wrapper for Oanda REST API"
-  :url "http://example.com/FIXME"
+  :url "https://github.com/yellowbean/cloanda"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
