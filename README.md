@@ -6,8 +6,8 @@ The clojure wrapper for OANDA REST API
 - [Installation](#installation)
 - [A mini example](#A-mini-example)
 - [Reference](#reference)
- - [Header Setup](#header-setup)
- - [Initiate Api Instance](#initiate-api-instance)
+ - [Setup Header ](#setup-header)
+ - [Initiate api Instance](#initiate-api-instance)
  - [Rate Management](#rate-management)
  - [Account Management](#account-management)
  - [Order Management](#order-management)
@@ -44,13 +44,13 @@ The clojure wrapper for OANDA REST API
 
 ## Reference
 
-### header setup
+### Setup Header 
     ;; setup token in headers
     ;; set datetime type in response by passing either "UNIX" or "RFC3339"
     (gen-headers "Your tokens here" "UNIX")
     (gen-headers "Your tokens here" "RFC3339")
     
-### Initiate an api instance
+### Initiate api instance
     (def oanda_api (api. "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com/" )))
 
 ### Rate Management
