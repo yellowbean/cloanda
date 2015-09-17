@@ -1,4 +1,5 @@
 (set! *warn-on-reflection* true)
+
 (ns cloanda.core
     (:require [clj-http.client :as client]
               [clojure.string :as string]
@@ -6,6 +7,11 @@
               )
     (:import [java.io.FilterInputStream])
     )
+
+(defmacro SEND [method api_url ]
+  "Macro to clean the client http get/post request"
+  )
+
 
 (defn gen-headers [ ^String token ^String datetime-format ]
     (let [ auth (str "Bearer " token)] ; "UNIX" or "RFC3339"
@@ -24,7 +30,7 @@
 (defprotocol rate_protocol
   (get-instrument-list [x])
   (get-current-price [x cur])
-  (get-instrument-history [x cur opt])
+  (get-instrument-history [x cur params])
   )
 
 (defprotocol account_protocol
@@ -35,16 +41,16 @@
 
 (defprotocol order_protocol
   (get-orders-by-account [x a_id])
-  (create-order [x a_id inst unit side type opt ])
+  (create-order [x a_id inst unit side type params ])
   (get-order-info [x a_id o_id])
-  (update-order [x a_id o_id opt])
+  (update-order [x a_id o_id params])
   (close-order [x a_id o_id])
   )
 
 (defprotocol trade_protocol
   (get-open-trades [x id])
   (get-trade-info [x a_id t_id])
-  (update-trade [x a_id t_id opt])
+  (update-trade [x a_id t_id params])
   (close-trade [x a_id t_id])
   )
 
@@ -73,90 +79,89 @@
   (event-stream [x])
   )
 
-(defrecord api [ url stream_url opt ]
+(defrecord api [ rest_url stream_url header ]
   rate_protocol
   (get-instrument-list [x]
-    (:body (client/get (str url "/v1/instruments" ) {:as :json :headers (:header opt)} )))
+    (:body (client/get (str rest_url "/v1/instruments" ) {:as :json :headers header} )))
 
   (get-current-price [ x cur ]
-    (:body (client/get (str url "/v1/prices?instruments=" (string/join "%2C" cur)) {:as :json :headers (:header opt)} )))
+    (:body (client/get (str rest_url "/v1/prices?instruments=" (string/join "%2C" cur)) {:as :json :headers header} )))
 
-  (get-instrument-history [ x cur p]
+  (get-instrument-history [ x cur params]
     (let [opt_str (apply str (for [i p] (str "&" (first i) "=" (second i))))]
-      (:body (client/get (str url "/v1/candles?instrument=" cur opt_str) {:as :json :headers (:header opt)} )
+      (:body (client/get (str rest_url "/v1/candles?instrument=" cur opt_str) {:as :json :headers header} )
       )))
 
   account_protocol
   (get-accounts [x]
-    (:body (client/post (str url "/v1/accounts") {:as :json :headers (:header opt)})))
+    (:body (client/post (str rest_url "/v1/accounts") {:as :json :headers header})))
   (get-account-info [x id]
-    (:body (client/get (str url "/v1/accounts/" id) {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/v1/accounts/" id) {:as :json :headers header})))
   (create-account [x]
-    (:body (client/post (str url "/v1/accounts") {:as :json :headers (:header opt)})))
+    (:body (client/post (str rest_url "/v1/accounts") {:as :json :headers header})))
 
   order_protocol
   (get-orders-by-account [x a_id]
-    (:body (client/get (str url "/v1/accounts/" a_id "/orders/") {:as :json :headers (:header opt)})))
-  (create-order [x a_id inst units side type opt]
+    (:body (client/get (str rest_url "/v1/accounts/" a_id "/orders/") {:as :json :headers header})))
+  (create-order [x a_id inst units side type params]
     (let [base_cmd  {:instrument  inst :units units :side side :type type}
-          exe_cmd (merge base_cmd opt)]
-      (:body (client/post (str url "/v1/accounts/" a_id "/orders") {:form-params exe_cmd  :as :json})))
+          exe_cmd (merge base_cmd params)]
+      (:body (client/post (str rest_url "/v1/accounts/" a_id "/orders") {:form-params exe_cmd  :as :json})))
     )
   (get-order-info [x a_id o_id]
-    (:body (client/get (str url "/v1/accounts/" a_id "/orders/" o_id) {:as :json :headers (:header opt)})))
-  (update-order [x a_id o_id opt]
-    (:body (client/patch (str url "/v1/accounts/" a_id "/orders/" o_id) {:form-params opt  :as :json})))
+    (:body (client/get (str rest_url "/v1/accounts/" a_id "/orders/" o_id) {:as :json :headers header})))
+  (update-order [x a_id o_id params]
+    (:body (client/patch (str rest_url "/v1/accounts/" a_id "/orders/" o_id) {:form-params params  :as :json})))
   (close-order [x a_id o_id]
-    (:body (client/delete (str url "/v1/accounts/" a_id "/orders/" o_id) {:as :json :headers (:header opt)})))
+    (:body (client/delete (str rest_url "/v1/accounts/" a_id "/orders/" o_id) {:as :json :headers header})))
 
   trade_protocol
   (get-open-trades [x id]
-    (:body (client/get (str url "/v1/accounts/" id "/trades/") {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/v1/accounts/" id "/trades/") {:as :json :headers header})))
   (get-trade-info [x a_id t_id]
-    (:body  (client/delete (str url "/v1/accounts/" a_id "/trades/" t_id) {:as :json :headers (:header opt)})))
-  (update-trade [x a_id t_id opt]
-
-      (:body (client/patch (str url "/v1/accounts/" a_id "/trades/" t_id) {:form-params opt :as :json})))
+    (:body  (client/delete (str rest_url "/v1/accounts/" a_id "/trades/" t_id) {:as :json :headers header})))
+  (update-trade [x a_id t_id params]
+    (:body (client/patch (str rest_url "/v1/accounts/" a_id "/trades/" t_id) {:form-params params :as :json})))
   (close-trade [x a_id t_id]
-    (:body (client/delete (str url "/v1/accounts/" a_id "/trades/" t_id) {:as :json :headers (:header opt)})))
+    (:body (client/delete (str rest_url "/v1/accounts/" a_id "/trades/" t_id) {:as :json :headers header})))
 
   position_protocol
   (get-open-position [x a_id]
-    (:body (client/get (str url "/v1/accounts/" a_id "/positions") {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/v1/accounts/" a_id "/positions") {:as :json :headers header})))
   (get-position-by-inst [x a_id inst]
-    (:body (client/get (str url "/v1/accounts/" a_id "/positions/" inst) {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/v1/accounts/" a_id "/positions/" inst) {:as :json :headers header})))
   (close-position [x a_id inst]
-    (:body (client/delete (str url "/v1/accounts/" a_id "/positions/" inst) {:as :json :headers (:header opt)})))
+    (:body (client/delete (str rest_url "/v1/accounts/" a_id "/positions/" inst) {:as :json :headers header})))
 
   transaction_protocol
   (get-txn-history [x a_id ]
-    (:body (client/get (str url "/v1/accounts/" a_id "/transactions/") {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/v1/accounts/" a_id "/transactions/") {:as :json :headers header})))
   (get-txn-info [x a_id t_id ]
-    (:body (client/get (str url "/v1/accounts/" a_id "/transactions/" t_id) {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/v1/accounts/" a_id "/transactions/" t_id) {:as :json :headers header})))
   (get-account-history [x a_id ]
-    (:body (client/get (str url "/v1/accounts/" a_id "/alltransactions/") {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/v1/accounts/" a_id "/alltransactions/") {:as :json :headers header})))
 
   forex_lab_protocol
   (get-calendar [x inst period]
-    (:body (client/get (str url "/labs/v1/calendar?instrument=" inst "&period=" period) {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/labs/v1/calendar?instrument=" inst "&period=" period) {:as :json :headers header})))
   (hist-pos-ratios [x inst period]
-    (:body (client/get (str url "/labs/v1/historical_position_ratios?instrument=" inst "&period=" period) {:as :json :headers (:header opt)} )))
+    (:body (client/get (str rest_url "/labs/v1/historical_position_ratios?instrument=" inst "&period=" period) {:as :json :headers header} )))
   (get-spreads [x inst period]
-    (:body (client/get (str url "/labs/v1/spreads?instrument=" inst "&period=" period) {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/labs/v1/spreads?instrument=" inst "&period=" period) {:as :json :headers header})))
   (get-cot [x inst]
-    (:body (client/get (str url "/labs/v1/commitments_of_traders?instrument=" inst) {:as :json :headers (:header opt)})))
+    (:body (client/get (str rest_url "/labs/v1/commitments_of_traders?instrument=" inst) {:as :json :headers header})))
   (get-order-book [x inst period]
-    (:Body (client/get (str url "/labs/v1/orderbook_data?instrument=" inst "&period=" period) {:as :json :headers (:header opt)}))
+    (:Body (client/get (str rest_url "/labs/v1/orderbook_data?instrument=" inst "&period=" period) {:as :json :headers header}))
     )
+  
   streaming_protocol
   (rate-stream [x a_id inst]
-    (:body (client/get (str stream_url "/v1/prices?accountId=" a_id "&instruments=" (string/join "%2C" inst)) {:as :stream :headers (:header opt)})))
+    (:body (client/get (str stream_url "/v1/prices?accountId=" a_id "&instruments=" (string/join "%2C" inst)) {:as :stream :headers header})))
 
   (event-stream [x]
-    (:body (client/get (str stream_url "/v1/events") {:as :stream  :headers (:header opt) }))
-    )
+    (:body (client/get (str stream_url "/v1/events") {:as :stream  :headers header })))
 )
 
 (defn init-api
-  ([url stream_url df] (api. url stream_url df) )
+  ([rest_url stream_url df] (api. rest_url stream_url df) )
   )

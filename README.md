@@ -1,6 +1,6 @@
-# cloanda
+# cloanda (active development)
 
-The clojure wrapper for OANDA REST API
+The clojure wrapper for OANDA REST API 
 
 ----
 - [Installation](#installation)
@@ -20,9 +20,15 @@ The clojure wrapper for OANDA REST API
 
     $ java -jar cloanda-0.1.0-standalone.jar [args]
 
-### Step 1 Initiate an api instance
-    (def api (init-rest-api "http://api-sandbox.oanda.com" "https://api-fxpractice.oanda.com" )))
-
+### Step 1 Creating a config header string
+    ;; setup token in headers
+    ;; set datetime type in response by passing either "UNIX" or "RFC3339"
+    (gen-headers "Your tokens here" "UNIX")
+    (gen-headers "Your tokens here" "RFC3339")
+    
+### Step 2 Initiate an api instance
+    (def oanda_api (api. "http://api-sandbox.oanda.com" "https://api-fxpractice.oanda.com" )))
+    
 #### Authtencation
 
 #### Options
