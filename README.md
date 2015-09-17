@@ -47,39 +47,52 @@ The clojure wrapper for OANDA REST API
 ### Setup Header 
     ;; setup token in headers
     ;; set datetime type in response by passing either "UNIX" or "RFC3339"
-    (gen-headers "Your tokens here" "UNIX")
-    (gen-headers "Your tokens here" "RFC3339")
+    (gen-header "Your tokens here" "UNIX")
+    (gen-header "Your tokens here" "RFC3339")
     
 ### Initiate api instance
-    (def oanda_api (api. "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com/" )))
+    (def oanda_api (api. "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com/" ))
 
 ### Rate Management
     ;;Get all avilable trading instruments
-    (get-instrument-list api)
+    (get-instrument-list oanda_api)
+    ;; response
+    ;; {:instruments: {:instrument "USD_CZK", :displayName "USD/CZK", :pip "0.0001", :maxTradeUnits 10000000}...}
+
 
     ;; Get current quote for a given instrument
-    (get-current-price api "EUR_USD")
+    (get-current-price api ["EUR_USD"])
+    ;; response
+    ;; {:prices [{:instrument "EUR_USD", :time "1442495217874957", :bid 1.24068, :ask 1.24082}]}
 
     ;; Get history prices
     ;; get history prices of instrument "EUR_USD"
     ;; by default it will return 500 periods & 5 seconds as granularity
     (get-instrument-history api "EUR_USD" {})
+    ;; response
+    ;; {:instrument "EUR_USD", :granularity "S5", :candles [{:highBid 1.24052, :time "1442495330000000", :lowBid 1.24052, :openAsk 1.24066, :closeAsk 1.24066, :openBid 1.24052, :volume 1, :highAsk 1.24066, :complete true, :closeBid 1.24052, :lowAsk 1.24066} {:highBid 1.24052, :time "1442495335000000", :lowBid 1.24044, :openAsk 1.24065, :closeAsk 1.24063, :openBid 1.24052, :volume 9, :highAsk 1.24066, :complete true, :closeBid 1.24044, :lowAsk 1.24063} {:highBid 1.24045, :time "1442495340000000", :lowBid 1.24044, :openAsk 1.24061, :closeAsk 1.24061, :openBid 1.24045, :volume 2, :highAsk 1.24061, :complete false, :closeBid 1.24044, :lowAsk 1.24061}]}
     
     ;; getting 50 periods  by passing an option map
     (get-instrument-history api "EUR_USD" {"count" 50})
     
-    ;; map can contains more than one parameter
+    ;; map can contains more than one parameter, "D" stands for "Day"
     (get-instrument-history api "EUR_USD" {"count" 50 "granularity" "D"})
 
 ### Account Management
     ;; get all accounts associate with current login
     (get-accounts api)
+    ;; response
+    ;; {:username "jamesmon", :password "tehydJuch^", :accountId 8055333}
     
     ;; get detail account information for given account id
-    (get-account-info api account_id)
+    (get-account-info api 8055333)
+    ;; response
+    ;; {:marginUsed 0, :accountCurrency "USD", :accountName "Primary", :realizedPl 0, :unrealizedPl 0, :balance 100000, :marginAvail 100000, :openTrades 0, :accountId 8055333, :marginRate 0.05, :openOrders 0}
     
     ;; create an account
     (create-account api)
+    ;; response
+    ;; {:username "grennett", :password "Ikfokded9", :accountId 7443292}
     
 ### Order Management
     ;; list all orders under a account
