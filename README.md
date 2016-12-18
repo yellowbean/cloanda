@@ -1,4 +1,4 @@
-# cloanda (active development)
+# cloanda (upgrading to rest-live-v20!)
 
 The clojure wrapper for OANDA REST API 
 
