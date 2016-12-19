@@ -40,9 +40,9 @@
 
 
 ;;;;;;;;;;;;;
-(defn gen-headers [ ^String token ^String datetime-format]
-    (let [ auth (str "Bearer " token)] ; "UNIX" or "RFC3339"
-     {"Authorization" auth  "X-Accept-Datetime-Format" datetime-format}))
+(defn gen-headers [ ^String token]
+    (let [ auth (str "Bearer " token)]
+     {"Authorization" auth  "X-Accept-Datetime-Format"}))
 
 
 
