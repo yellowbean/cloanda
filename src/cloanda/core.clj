@@ -22,12 +22,16 @@
 (defmacro DELETE [calling_url header]
     (list client/delete calling_url {:as :json :headers header}))
 
+(defmacro PUT [calling_url form header]
+    (list client/put calling_url {:as :json :body form :headers header}))
 
 (defmacro PATCH
     ([calling_url header]
      (list client/patch calling_url {:as :json :headers header}))
     ([calling_url form header]
      (list client/patch calling_url {:as :json :headers header})))
+
+
 
 
 
@@ -42,7 +46,7 @@
 ;;;;;;;;;;;;;
 (defn gen-headers [ ^String token]
     (let [ auth (str "Bearer " token)]
-     {"Authorization" auth  "X-Accept-Datetime-Format"}))
+     {"Authorization" auth}))
 
 
 
@@ -79,7 +83,7 @@
   (get-orders-by-account [x a_id params])
   (get-order-info [x a_id o_id])
   (get-pending-orders [x a_id])
-  (replace-order [x a_id o_id])
+  (replace-order [x a_id o_id params])
   (cancel-order [x a_id o_id]))
 
 
@@ -88,14 +92,14 @@
   (get-trades [x id])
   (get-trade-info [x a_id t_id])
   (update-trade [x a_id t_id params])
-  (close-trade [x a_id t_id]))
+  (close-trade [x a_id t_id params]))
 
 
 (defprotocol position_protocol
   (get-position [x a_id])
   (get-open-position [x a_id])
   (get-position-by-inst [x a_id inst])
-  (close-position [x a_id inst]))
+  (close-position [x a_id inst params]))
 
 
 (defprotocol transaction_protocol
@@ -167,10 +171,10 @@
       (GET (str rest_url "/v3/accounts/" a_id "/pendingOrders" ) header))
 
 
-  (replace-order [x a_id o_id]
-    (PUT (str rest_url "/v3/accounts/" a_id "/orders/" o_id) header))
+  (replace-order [x a_id o_id params]
+    (PUT (str rest_url "/v3/accounts/" a_id "/orders/" o_id) params header))
   (cancel-order [x a_id o_id]
-    (PUT (str rest_url "/v1/accounts/" a_id "/orders/" o_id "/cancel") header))
+    (PUT (str rest_url "/v1/accounts/" a_id "/orders/" o_id "/cancel") "" header))
 
   trade_protocol
   (get-open-trades [x id]
@@ -181,8 +185,8 @@
     (GET (str rest_url "/v3/accounts/" a_id "/trades/" t_id) header))
   (update-trade [x a_id t_id params]
     (PUT (str rest_url "/v3/accounts/" a_id "/trades/" t_id "/orders") params header))
-  (close-trade [x a_id t_id]
-    (PUT (str rest_url "/v3/accounts/" a_id "/trades/" t_id "/close") header))
+  (close-trade [x a_id t_id params]
+    (PUT (str rest_url "/v3/accounts/" a_id "/trades/" t_id "/close") params header))
 
   position_protocol
   (get-position [x a_id]
@@ -191,8 +195,8 @@
     (GET (str rest_url "/v3/accounts/" a_id "/openPositions") header))
   (get-position-by-inst [x a_id inst]
     (GET (str rest_url "/v3/accounts/" a_id "/positions/" inst) header))
-  (close-position [x a_id inst]
-    (PUT (str rest_url "/v3/accounts/" a_id "/positions/" inst "/close") header))
+  (close-position [x a_id inst params]
+    (PUT (str rest_url "/v3/accounts/" a_id "/positions/" inst "/close") params header))
 
   transaction_protocol
   (get-txn-history [x a_id params]
@@ -207,9 +211,10 @@
         "TBD")
   pricing_protocol
   (get-pricing-inst [x a_id params]
-    (GET (str rest_url "/v3/accounts/" a_id "/pricing" (params2query params))))
+    (GET (str rest_url "/v3/accounts/" a_id "/pricing" (params2query params)) header))
   (get-pricing-stream [x a_id params]
-    (GET (str stream_url "/v3/accounts/" a_id "/pricing/stream" (params2query params)))))
+    (GET (str stream_url "/v3/accounts/" a_id "/pricing/stream" (params2query params)) header)))
+
   ;(get-account-history [x a_id]
   ;  (GET (str rest_url "/v1/accounts/" a_id "/alltransactions/") header))
 

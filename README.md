@@ -152,15 +152,16 @@ The clojure wrapper for OANDA REST API
 
 ## Development Reference
 
-http://developer.oanda.com/rest-live/development-guide/
+http://developer.oanda.com/rest-live-v20/development-guide/
 
 
 
 ### Bugs
 Please drop an eamil to always.zhang@gmail.com
 
-## License
+## License & Legal
 
-Copyright © 2015 Xiaoyu
-
-Distributed under the Eclipse Public License either version 1.0 or any later version.
+* No quality garantee for any functionality or effectiveness or correct mapping of OANDA API.
+* Any user shall use this library by his/her own descrpency and responsible for any lossed caused by this library.
+* Copyright © 2015/2016 Xiaoyu
+* Distributed under the Eclipse Public License either version 1.0 or any later version.
