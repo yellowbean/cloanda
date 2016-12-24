@@ -64,7 +64,6 @@
 
 
 (defprotocol instrument_protocol
-  (get-instrument-list [x])
   (get-current-price [x cur])
   (get-instrument-history [x cur params]))
 

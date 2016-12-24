@@ -32,13 +32,19 @@ The clojure wrapper for OANDA REST API
 ## A mini example
 
     ;; setup a request header
-    (def my-header (gen-header "your token" ))
+    (def my-header (gen-headers "your token" ))
+
+    ;; pick a trading env by a hash-map
+    ;; production
+    (:production server_env)
+    ;; practice
+    (:practice server_env)
 
     ;; setup api instance
-    (def oanda_api (api. "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com/" my-header))
+    (def oanda_api (init-api (:practice server_env) my-header))
 
-    ;; get available trade instruments
-    (get-instrument-list oanda_api)
+    ;; get available accounts
+    (get-accounts oanda_api)
 
     ;; other stuff
 
@@ -49,11 +55,11 @@ The clojure wrapper for OANDA REST API
     (def my-header (gen-header "Your tokens here") )
 
 ### Initiate api instance
-    (def oanda_api (api. "http://api-sandbox.oanda.com" "http://stream-sandbox.oanda.com/" my-header))
+    (def oanda_api (init-api (:practice server_env) my-header))
 
 ### Rate Management
-    ;;Get all avilable trading instruments
-    (get-instrument-list oanda_api)
+    ;;Get all available trading instruments
+    (get-account-instruments oanda_api "account id")
     ;; response
     ;; {:instruments: {:instrument "USD_CZK", :displayName "USD/CZK", :pip "0.0001", :maxTradeUnits 10000000}...}
 
@@ -157,11 +163,11 @@ http://developer.oanda.com/rest-live-v20/development-guide/
 
 
 ### Bugs
-Please drop an eamil to always.zhang@gmail.com
+Please drop an email to always.zhang@gmail.com
 
 ## License & Legal
 
-* No quality garantee for any functionality or effectiveness or correct mapping of OANDA API.
-* Any user shall use this library by his/her own descrpency and responsible for any lossed caused by this library.
+* No quality guarantee for any functionality or effectiveness or correct mapping of OANDA API.
+* Any user shall use this library by his/her own discretion and be responsible for any losses caused by this library.
 * Copyright © 2015/2016 Xiaoyu
 * Distributed under the Eclipse Public License either version 1.0 or any later version.

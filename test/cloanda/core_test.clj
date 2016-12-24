@@ -8,9 +8,6 @@
 
 (with-test
   (def test-api (api. rest_url stream_url df))
-  
+
   (is (= 4 (my-function 2 2)))
-  (is (= 7 (my-function 3 4)))
-  
-  
-  )
+  (is (= 7 (my-function 3 4))))
