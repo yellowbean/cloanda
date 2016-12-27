@@ -1,5 +1,10 @@
 # cloanda (upgrading to rest-live-v20!)
 
+## Status update: 2016-12-26
+
+I'm still reviewing breaking sample code during the migration to v20 REST API, these sample codes are subject to be changed soon
+----
+
 The clojure wrapper for OANDA REST API
 
 ----
