@@ -7,29 +7,31 @@
 
     (:import [java.io.FilterInputStream]))
 
+(defmacro HTTP-RESP-HANDLE [x]
+  (list "A"))
+
+
 
 (defmacro GET [ calling_url header]
-  (list client/get calling_url {:as :json :headers header}))
-
+  (list client/get calling_url {:as :json :headers header :content-type :json :throw-entire-message? true}))
 
 (defmacro POST
     ([ calling_url header]
-     (list client/post calling_url {:as :json :headers header}))
+     (list client/post calling_url {:as :json :headers header :content-type :json}))
     ([ calling_url form header]
-     (list client/post calling_url {:form-params form :as :json :headers header})))
-
+     (list client/post calling_url {:form-params form :as :json :headers header :content-type :json})))
 
 (defmacro DELETE [calling_url header]
-    (list client/delete calling_url {:as :json :headers header}))
+    (list client/delete calling_url {:as :json :headers header :content-type :json}))
 
 (defmacro PUT [calling_url form header]
-    (list client/put calling_url {:as :json :body form :headers header}))
+    (list client/put calling_url {:as :json :body form :headers header :content-type :json}))
 
 (defmacro PATCH
     ([calling_url header]
-     (list client/patch calling_url {:as :json :headers header}))
+     (list client/patch calling_url {:as :json :headers header :content-type :json}))
     ([calling_url form header]
-     (list client/patch calling_url {:as :json :headers header})))
+     (list client/patch calling_url {:as :json :headers header :content-type :json})))
 
 
 
@@ -59,13 +61,13 @@
 
 ;;;;;;;;;;;;; Utils
 (defn params2query [ p]
-  (apply str (for [i p] (str "&" (first i) "=" (second i)))))
+  (subs (apply str (for [i p] (str "&" (first i) "=" (second i)))) 1))
 
 
 
 (defprotocol instrument_protocol
   (get-current-price [x cur])
-  (get-instrument-history [x cur params]))
+  (get-instrument-history [x cur] [x cur params]))
 
 
 (defprotocol account_protocol
@@ -74,12 +76,12 @@
   (get-account-summary [ x id])
   (get-account-instruments [ x id])
   (patch-account [ x id])
-  (get-account-changes [ x id]))
+  (get-account-changes [ x id ] [ x id params]))
 
 
 (defprotocol order_protocol
   (create-order [x a_id inst unit side type params])
-  (get-orders-by-account [x a_id params])
+  (get-orders-by-account [x a_id] [x a_id params])
   (get-order-info [x a_id o_id])
   (get-pending-orders [x a_id])
   (replace-order [x a_id o_id params])
@@ -127,18 +129,16 @@
 
 
 (defrecord api [ rest_url stream_url header]
+
   instrument_protocol
-
-  ;(get-current-price [ x cur ]
-  ;  (GET (str rest_url "/v1/prices?instruments=" (string/join "%2C" cur)) header))
-
-  (get-instrument-history [ x cur params]
+  (get-instrument-history [ x cur ]
+    (GET (str rest_url "/v3/instruments/" cur ) header))
+  (get-instrument-history [ x cur params ]
     (let [opt_str (params2query params)]
-      (GET (str rest_url "/v3/instrument/" cur "/candles?" opt_str ) header)))
-
+      (GET (str rest_url "/v3/instruments/" cur "/candles?" opt_str ) header)))
 
   account_protocol
-  (get-accounts [ x]
+  (get-accounts [ x ]
     (GET (str rest_url "/v3/accounts") header))
   (get-account-info [ x id]
     (GET (str rest_url "/v3/accounts/" id) header))
@@ -146,30 +146,28 @@
     (GET (str rest_url "/v3/accounts/" id "/summary") header))
   (get-account-instruments [ x id]
     (GET (str rest_url "/v3/accounts/" id "/instruments") header))
-
-
   (patch-account [ x id]
     (PATCH (str rest_url "/v3/accounts/" id "/configuration") header))
   (get-account-changes [ x id]
       (GET (str rest_url "/v3/accounts/" id "/changes") header))
+  (get-account-changes [x id params]
+      (GET (str rest_url "/v3/accounts/" id "/changes?" (params2query params)) header))
+
+
 
   order_protocol
   (create-order [x a_id inst units side type params]
     (let [base_cmd  {:instrument  inst :units units :side side :type type}
           exe_cmd (merge base_cmd params)]
       (POST (str rest_url "/v3/accounts/" a_id "/orders") exe_cmd)))
-
-
+  (get-orders-by-account [x a_id]
+    (GET (str rest_url "/v3/accounts/" a_id "/orders" ) header))
   (get-orders-by-account [x a_id params]
     (GET (str rest_url "/v3/accounts/" a_id "/orders?" (params2query params) ) header))
-
   (get-order-info [x a_id o_id]
     (GET (str rest_url "/v3/accounts/" a_id "/orders/" o_id) header))
-
   (get-pending-orders [x a_id]
       (GET (str rest_url "/v3/accounts/" a_id "/pendingOrders" ) header))
-
-
   (replace-order [x a_id o_id params]
     (PUT (str rest_url "/v3/accounts/" a_id "/orders/" o_id) params header))
   (cancel-order [x a_id o_id]

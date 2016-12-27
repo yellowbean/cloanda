@@ -57,7 +57,7 @@ The clojure wrapper for OANDA REST API
 ### Initiate api instance
     (def oanda_api (init-api (:practice server_env) my-header))
 
-### Rate Management
+### Instrument Management
     ;;Get all available trading instruments
     (get-account-instruments oanda_api "account id")
     ;; response
@@ -69,10 +69,13 @@ The clojure wrapper for OANDA REST API
     ;; response
     ;; {:prices [{:instrument "EUR_USD", :time "1442495217874957", :bid 1.24068, :ask 1.24082}]}
 
+    (get-instrument-history api "EUR_USD" )
     ;; Get history prices
     ;; get history prices of instrument "EUR_USD"
     ;; by default it will return 500 periods & 5 seconds as granularity
-    (get-instrument-history api "EUR_USD" {})
+
+    ;; getting EUR/USD last 15 ticks with granularity = 5 minutes
+    (get-instrument-history api "EUR_USD" {"count" "5" "granularity" "M5"})
     ;; response
     ;; {:instrument "EUR_USD", :granularity "S5", :candles [{:highBid 1.24052, :time "1442495330000000", :lowBid 1.24052, :openAsk 1.24066, :closeAsk 1.24066, :openBid 1.24052, :volume 1, :highAsk 1.24066, :complete true, :closeBid 1.24052, :lowAsk 1.24066} {:highBid 1.24052, :time "1442495335000000", :lowBid 1.24044, :openAsk 1.24065, :closeAsk 1.24063, :openBid 1.24052, :volume 9, :highAsk 1.24066, :complete true, :closeBid 1.24044, :lowAsk 1.24063} {:highBid 1.24045, :time "1442495340000000", :lowBid 1.24044, :openAsk 1.24061, :closeAsk 1.24061, :openBid 1.24045, :volume 2, :highAsk 1.24061, :complete false, :closeBid 1.24044, :lowAsk 1.24061}]}
 
@@ -86,24 +89,30 @@ The clojure wrapper for OANDA REST API
     ;; get all accounts associate with current login
     (get-accounts api)
     ;; response
-    ;; {:username "jamesmon", :password "tehydJuch^", :accountId 8055333}
+    ;; .... :body {:accounts [{:id "ACCOUNT ID", :tags []}]} ....
+
+    ;; get all tradable instruments under a given account
+    (get-account-instruments api "ACCOUNT ID")
 
     ;; get detail account information for given account id
-    (get-account-info api 8055333)
+    (get-account-info api "ACCOUNT ID")
     ;; response
     ;; {:marginUsed 0, :accountCurrency "USD", :accountName "Primary", :realizedPl 0, :unrealizedPl 0, :balance 100000, :marginAvail 100000, :openTrades 0, :accountId 8055333, :marginRate 0.05, :openOrders 0}
 
-    ;; create an account
-    (create-account api)
-    ;; response
-    ;; {:username "grennett", :password "Ikfokded9", :accountId 7443292}
+    ;; get summary account information for given account id
+    (get-account-summary api "ACCOUNT ID")
+
+    ;; get current account state and changes since a transaction id
+    (get-account-changes api "ACCOUNT ID")
+    (get-account-changes api "ACCOUNT ID" {"sinceTransactionID" "1523"})
+
 
 ### Order Management
     ;; list all orders under a account
-    (get-orders-by-account api account_id)
+    (get-orders-by-account api  "ACCOUNT ID")
 
     ;; place an buy market order
-    (create-order oanda_api 8055333 "EUR_USD" 100 "buy" "market" {})
+    (create-order oanda_api "ACCOUNT ID" "EUR_USD" 100 "buy" "market" {})
     ;; response
     ;; {:instrument "EUR_USD", :time "2015-09-17T13:25:44.000000Z", :price 1.2405, :tradeOpened {:id 175584567, :units 100, :side "buy", :takeProfit 0, :stopLoss 0, :trailingStop 0}, :tradesClosed [], :tradeReduced {}}
 
