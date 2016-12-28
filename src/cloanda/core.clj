@@ -17,9 +17,9 @@
 
 (defmacro POST
     ([ calling_url header]
-     (list client/post calling_url {:as :json :headers header :content-type :json}))
+     (list client/post calling_url {:as :json :headers header :content-type :json  :throw-entire-message? true}))
     ([ calling_url form header]
-     (list client/post calling_url {:form-params form :as :json :headers header :content-type :json})))
+     (list client/post calling_url {:body form :as :json :headers header :content-type :json  :throw-entire-message? true})))
 
 (defmacro DELETE [calling_url header]
     (list client/delete calling_url {:as :json :headers header :content-type :json}))
@@ -131,14 +131,14 @@
 (defrecord api [ rest_url stream_url header]
 
   instrument_protocol
-  (get-instrument-history [ x cur ]
+  (get-instrument-history [ x cur]
     (GET (str rest_url "/v3/instruments/" cur ) header))
-  (get-instrument-history [ x cur params ]
+  (get-instrument-history [ x cur params]
     (let [opt_str (params2query params)]
       (GET (str rest_url "/v3/instruments/" cur "/candles?" opt_str ) header)))
 
   account_protocol
-  (get-accounts [ x ]
+  (get-accounts [ x]
     (GET (str rest_url "/v3/accounts") header))
   (get-account-info [ x id]
     (GET (str rest_url "/v3/accounts/" id) header))
@@ -158,8 +158,12 @@
   order_protocol
   (create-order [x a_id inst units side type params]
     (let [base_cmd  {:instrument  inst :units units :side side :type type}
-          exe_cmd (merge base_cmd params)]
-      (POST (str rest_url "/v3/accounts/" a_id "/orders") exe_cmd)))
+          exe_cmd (merge base_cmd params)
+          order (json/generate-string {:order exe_cmd})]
+      ;order
+      (POST (str rest_url "/v3/accounts/" a_id "/orders") order header)
+
+      ))
   (get-orders-by-account [x a_id]
     (GET (str rest_url "/v3/accounts/" a_id "/orders" ) header))
   (get-orders-by-account [x a_id params]
