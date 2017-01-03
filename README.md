@@ -136,6 +136,9 @@ The clojure wrapper for OANDA REST API
     ;; list all trades given an account id
     (get-open-trades api account_id)
 
+    ;; list all trades associate with a given account
+    (get-trades api account_id)
+
     ;; get detail trade info by trade id
     (get-trade-info api account_id trade_id)
 
@@ -149,6 +152,9 @@ The clojure wrapper for OANDA REST API
 
     ;; list all position under a given account id
     (get-open-position api account_id)
+
+    ;; list all position of an account
+    (get-position api account_id)
 
     ;; get position of given instrument and account id
     (get-position-by-inst api account_id "EUR_USD")
@@ -168,7 +174,7 @@ The clojure wrapper for OANDA REST API
     ;; list account history by given account id
     (get-account-history api account_id)
 
-
+### Pricing
 
 
 ## Development Reference

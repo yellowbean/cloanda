@@ -7,35 +7,27 @@
 
     (:import [java.io.FilterInputStream]))
 
-(defmacro HTTP-RESP-HANDLE [x]
-  (list "A"))
-
-
 
 (defmacro GET [ calling_url header]
-  (list client/get calling_url {:as :json :headers header :content-type :json :throw-entire-message? true}))
+  (list client/get calling_url {:as :json :headers header :content-type :json :throw-exceptions false}))
 
 (defmacro POST
     ([ calling_url header]
-     (list client/post calling_url {:as :json :headers header :content-type :json  :throw-entire-message? true}))
+     (list client/post calling_url {:as :json :headers header :content-type :json  :throw-exceptions false}))
     ([ calling_url form header]
-     (list client/post calling_url {:body form :as :json :headers header :content-type :json  :throw-entire-message? true})))
+     (list client/post calling_url {:body form :as :json :headers header :content-type :json  :throw-exceptions false})))
 
 (defmacro DELETE [calling_url header]
-    (list client/delete calling_url {:as :json :headers header :content-type :json}))
+    (list client/delete calling_url {:as :json :headers header :content-type :json :throw-exceptions false}))
 
 (defmacro PUT [calling_url form header]
-    (list client/put calling_url {:as :json :body form :headers header :content-type :json}))
+    (list client/put calling_url {:as :json :body form :headers header :content-type :json :throw-exceptions false}))
 
 (defmacro PATCH
     ([calling_url header]
-     (list client/patch calling_url {:as :json :headers header :content-type :json}))
+     (list client/patch calling_url {:as :json :headers header :content-type :json :throw-exceptions false}))
     ([calling_url form header]
-     (list client/patch calling_url {:as :json :headers header :content-type :json})))
-
-
-
-
+     (list client/patch calling_url {:as :json :headers header :content-type :json :throw-exceptions false})))
 
 ;;;;;;;;;;;;;;global varialbes
 
@@ -114,20 +106,6 @@
   (get-pricing-inst [x a_id params])
   (get-pricing-stream [x a_id params]))
 
-
-;(defprotocol forex_lab_protocol
-;  (get-calendar [x inst period])
-;  (hist-pos-ratios [x inst period])
-;  (get-spreads [x inst period])
-;  (get-cot [x inst])
-;  (get-order-book [x inst period]))
-;
-
-;(defprotocol streaming_protocol
-;  (rate-stream [x a_id inst])
-;  (event-stream [x]))
-
-
 (defrecord api [ rest_url stream_url header]
 
   instrument_protocol
@@ -152,8 +130,6 @@
       (GET (str rest_url "/v3/accounts/" id "/changes") header))
   (get-account-changes [x id params]
       (GET (str rest_url "/v3/accounts/" id "/changes?" (params2query params)) header))
-
-
 
   order_protocol
   (create-order [x a_id inst units side type params]
