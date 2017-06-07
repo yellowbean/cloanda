@@ -1,5 +1,5 @@
-(defproject cloanda "0.1.3-SNAPSHOT"
-  :description "A clojure wrapper for Oanda REST API"
+(defproject cloanda "0.1.4-Beta"
+  :description "A clojure wrapper for Oanda REST API v20"
   :url "https://github.com/yellowbean/cloanda"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -7,7 +7,7 @@
                  [clj-http "2.3.0"]
                  [clj-json "0.5.3"]
                  [org.clojure/tools.logging "0.3.1"]
-                 [org.apache.commons/commons-math3 "3.5"]
+                 ;[org.apache.commons/commons-math3 "3.5"]
                  ]
 
   :main ^:skip-aot cloanda.core

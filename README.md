@@ -1,6 +1,6 @@
 # cloanda (upgrading to rest-live-v20!)
 
-## Status update: 2016-12-26
+## Status update: 2017-06-07
 
 I'm still reviewing breaking sample code during the migration to v20 REST API, these sample codes are subject to be changed soon
 ----
