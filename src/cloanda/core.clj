@@ -101,7 +101,7 @@
   (get-txn-info [x id t_id])
   (get-txn-range [x id params])
   (get-txn-since [x id params])
-  (get-txn-stream [x id]))
+  (get-txn-stream [x id params]))
   ;(get-account-history [x a_id]))
 (defprotocol pricing_protocol
   (get-pricing-inst [x id params])
@@ -186,8 +186,8 @@
     (GET (str rest_url "/v3/accounts/" id "/transactions/idrange" (params2query params) ) header))
   (get-txn-since [x id params]
     (GET (str rest_url "/v3/accounts/" id "/transactions/sinceid" (params2query params) ) header))
-  (get-txn-stream [x id]
-        "TBD")
+  (get-txn-stream [x id params]
+    (GET (str stream_url "/v3/accounts/" id "/transactions/stream" (params2query params) ) header)    )
   pricing_protocol
   (get-pricing-inst [x id params]
     (GET (str rest_url "/v3/accounts/" id "/pricing" (params2query params)) header))

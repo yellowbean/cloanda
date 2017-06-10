@@ -1,4 +1,4 @@
-(defproject cloanda "0.1.4-Beta"
+(defproject cloanda "0.1.4-SNAPSHOT"
   :description "A clojure wrapper for Oanda REST API v20"
   :url "https://github.com/yellowbean/cloanda"
   :license {:name "Eclipse Public License"
