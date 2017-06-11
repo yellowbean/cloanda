@@ -108,7 +108,6 @@
   (get-pricing-stream [x id params]))
 
 (defrecord api [ rest_url stream_url header]
-
   instrument_protocol
   (get-instrument-history [ x inst ]
     (GET (str rest_url "/v3/instruments/" inst ) header))
@@ -218,4 +217,4 @@
 
 
 (defn init-api
-  ([server_env df] (api. (first server_env) (second server_env) df)))
+  [server_env df] (api. (first server_env) (second server_env) df))
