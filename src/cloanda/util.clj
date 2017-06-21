@@ -1,15 +1,17 @@
 (ns cloanda.util
     (:require [clojure.string :as string]
+              [cheshiren.core :as json]
               )
     (:import [org.apache.commons.math3.stat.descriptive.moment Variance Mean]
              [org.apache.commons.math3.stat.regression SimpleRegression]))
 
+(defn get-resp [x]
+ (json/parse-string (:body x)))
 
 
-
-(defn get-instrument-names [ inst-resp ]
+(defn extract-instrument-names [ inst-resp ]
   "Get a list of instrument names"
-  (let [ inst-list  (:instruments (:body inst-resp)) ]
+  (let [ inst-list  ((get-resp inst-resp) :instruments) ]
     (map :name inst-list)
   )
 )

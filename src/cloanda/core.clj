@@ -3,9 +3,13 @@
 (ns cloanda.core
     (:require [clj-http.client :as client]
               [clojure.string :as string]
-              [clj-json.core :as json])
+              [cheshire.core :as json])
 
     (:import [java.io.FilterInputStream]))
+
+(defmacro HTTP-WRAPPER [x]
+
+  )
 
 
 (defmacro GET [ calling_url header]
@@ -109,8 +113,6 @@
 
 (defrecord api [ rest_url stream_url header]
   instrument_protocol
-  (get-instrument-history [ x inst ]
-    (GET (str rest_url "/v3/instruments/" inst ) header))
   (get-instrument-history [ x inst params ]
     "get history candles of a instrument"
     (let [opt_str (params2query params) ]
@@ -152,7 +154,7 @@
   (replace-order [x id o_id params]
     (PUT (str rest_url "/v3/accounts/" id "/orders/" o_id) params header))
   (cancel-order [x id o_id]
-    (PUT (str rest_url "/v1/accounts/" id "/orders/" o_id "/cancel") "" header))
+    (PUT (str rest_url "/v3/accounts/" id "/orders/" o_id "/cancel") "" header))
 
   trade_protocol
   (get-open-trades [x id]
@@ -217,4 +219,8 @@
 
 
 (defn init-api
-  [server_env df] (api. (first server_env) (second server_env) df))
+  ([server_env h ]
+    (api. (first server_env) (second server_env) h))
+  ([server_env h flags]
+    (api. (first server_env) (second server_env) h))
+    )

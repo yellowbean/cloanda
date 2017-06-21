@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [clj-http "2.3.0"]
-                 [clj-json "0.5.3"]
+                 [cheshire "5.7.1"];[clj-json "0.5.3"]
                  [org.clojure/tools.logging "0.3.1"]
                  ;[org.apache.commons/commons-math3 "3.5"]
                  ]
