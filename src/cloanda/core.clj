@@ -7,31 +7,32 @@
 
     (:import [java.io.FilterInputStream]))
 
-(defmacro HTTP-WRAPPER [x]
+(defmacro http-body-form [ f h ]
+  {:as :json :body f :headers h :content-type :json :throw-exceptions false})
 
-  )
-
+(defmacro http-normal [ h ]
+  {:as :json :headers h :content-type :json :throw-exceptions false})
 
 (defmacro GET [ calling_url header]
-  (list client/get calling_url {:as :json :headers header :content-type :json :throw-exceptions false}))
+  (list client/get calling_url (http-normal header)  ))
 
 (defmacro POST
     ([ calling_url header]
-     (list client/post calling_url {:as :json :headers header :content-type :json  :throw-exceptions false}))
+     (list client/post calling_url (http-normal header) ))
     ([ calling_url form header]
-     (list client/post calling_url {:body form :as :json :headers header :content-type :json  :throw-exceptions false})))
+     (list client/post calling_url (http-body-form form header) )))
 
 (defmacro DELETE [calling_url header]
-    (list client/delete calling_url {:as :json :headers header :content-type :json :throw-exceptions false}))
+    (list client/delete calling_url (http-normal header) ))
 
 (defmacro PUT [calling_url form header]
-    (list client/put calling_url {:as :json :body form :headers header :content-type :json :throw-exceptions false}))
+    (list client/put calling_url ) (http-body-form form header) )
 
 (defmacro PATCH
     ([calling_url header]
-     (list client/patch calling_url {:as :json :headers header :content-type :json :throw-exceptions false}))
+     (list client/patch calling_url (http-normal header) ))
     ([calling_url form header]
-     (list client/patch calling_url {:as :json :headers header :content-type :json :throw-exceptions false})))
+     (list client/patch calling_url (http-normal header) )))
 
 ;;;;;;;;;;;;;;global varialbes
 
