@@ -1,6 +1,6 @@
 (ns cloanda.util
     (:require [clojure.string :as string]
-              [cheshiren.core :as json]
+              [cheshire.core :as json]
               )
     (:import [org.apache.commons.math3.stat.descriptive.moment Variance Mean]
              [org.apache.commons.math3.stat.regression SimpleRegression]))
@@ -9,15 +9,18 @@
  (json/parse-string (:body x)))
 
 
+(defn extract-account-numbers [ accs-resp]
+  (map :id (get-in accs-resp [:body :accounts] ))
+  )
+
 (defn extract-instrument-names [ inst-resp ]
   "Get a list of instrument names"
-  (let [ inst-list  ((get-resp inst-resp) :instruments) ]
+  (let [ inst-list  (get-in inst-resp [:body :instruments] ) ]
     (map :name inst-list)
   )
 )
 
-
-(defn get-instrument-prices [ history-resp price-type]
+(defn extract-instrument-prices [ history-resp price-type]
   "Get instrument prices given option of open/close/high/low, return a double array"
   (let [ candles (get-in history-resp [:body :candles])
           prices (pmap #(get-in % [:mid price-type]) candles)
