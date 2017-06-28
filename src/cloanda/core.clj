@@ -59,6 +59,7 @@
 
 ;;;;;;;;;;;;; Utils
 (defn params2query [ p ]
+  "generate url query string"
   (subs (apply str (for [i p] (str "&" (first i) "=" (second i)))) 1))
 
 
@@ -66,7 +67,6 @@
 (defprotocol instrument_protocol
   (get-current-price [x cur])
   (get-instrument-history [x cur] [x cur params]))
-
 
 (defprotocol account_protocol
   (get-accounts [x])
@@ -76,7 +76,6 @@
   (patch-account [ x id])
   (get-account-changes [ x id ] [ x id params]))
 
-
 (defprotocol order_protocol
   (create-order [x id inst unit side type params])
   (get-orders-by-account [x id] [x id params])
@@ -85,7 +84,6 @@
   (replace-order [x id o_id params])
   (cancel-order [x id o_id]))
 
-
 (defprotocol trade_protocol
   (get-open-trades [x id])
   (get-trades [x id])
@@ -93,13 +91,11 @@
   (update-trade [x id t_id params])
   (close-trade [x id t_id params]))
 
-
 (defprotocol position_protocol
   (get-position [x id])
   (get-open-position [x id])
   (get-position-by-inst [x id inst])
   (close-position [x id inst params]))
-
 
 (defprotocol transaction_protocol
   (get-txn-history [x id params])
@@ -111,6 +107,7 @@
 (defprotocol pricing_protocol
   (get-pricing-inst [x id params])
   (get-pricing-stream [x id params]))
+
 
 (defrecord api [ rest_url stream_url header]
   instrument_protocol
@@ -141,9 +138,7 @@
           exe_cmd (merge base_cmd params)
           order (json/generate-string {:order exe_cmd})]
       ;order
-      (POST (str rest_url "/v3/accounts/" id "/orders") order header)
-
-      ))
+      (POST (str rest_url "/v3/accounts/" id "/orders") order header)))
   (get-orders-by-account [x id ]
     (GET (str rest_url "/v3/accounts/" id "/orders" ) header))
   (get-orders-by-account [x id params]

@@ -20,13 +20,20 @@
   )
 )
 
-(defn extract-instrument-prices [ history-resp price-type]
+(defn extract-instrument-prices
   "Get instrument prices given option of open/close/high/low, return a double array"
-  (let [ candles (get-in history-resp [:body :candles])
+  ([ history-resp price-type]
+    (extract-instrument-prices history-resp price-type :array))
+  ([ history-resp price-type t]
+    (let [ candles (get-in history-resp [:body :candles])
           prices (pmap #(get-in % [:mid price-type]) candles)
           prices_in_double (pmap #(Double. %) prices)
           ]
-    (into-array Double/TYPE prices_in_double))
+         (cond
+               (= t :array) (into-array Double/TYPE prices_in_double)
+               (= t :list) prices_in_double
+               )
+         ))
 )
 
 (defn cal-variance [ d ]
