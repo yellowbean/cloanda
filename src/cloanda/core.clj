@@ -7,32 +7,36 @@
 
     (:import [java.io.FilterInputStream]))
 
-(defmacro http-body-form [ f h ]
-  {:as :json :body f :headers h :content-type :json :throw-exceptions false})
 
-(defmacro http-normal [ h ]
-  {:as :json :headers h :content-type :json :throw-exceptions false})
+
+(defn header-decorator
+  ([ h ]
+   {:as :json :headers h :content-type :json :throw-exceptions false})
+  ([ f h ]
+   {:as :json :body f :headers h :content-type :json :throw-exceptions false})
+  )
+
 
 (defmacro GET [ calling_url header]
-  (list client/get calling_url (http-normal header)  ))
+    (list client/get calling_url (header-decorator header)  ))
 
 (defmacro POST
     ([ calling_url header]
-     (list client/post calling_url (http-normal header) ))
+     (list client/post calling_url (header-decorator header) ))
     ([ calling_url form header]
-     (list client/post calling_url (http-body-form form header) )))
+     (list client/post calling_url (header-decorator form header) )))
 
 (defmacro DELETE [calling_url header]
-    (list client/delete calling_url (http-normal header) ))
+    (list client/delete calling_url (header-decorator header) ))
 
 (defmacro PUT [calling_url form header]
-    (list client/put calling_url ) (http-body-form form header) )
+    (list client/put calling_url ) (header-decorator form header) )
 
 (defmacro PATCH
     ([calling_url header]
-     (list client/patch calling_url (http-normal header) ))
+     (list client/patch calling_url (header-decorator header) ))
     ([calling_url form header]
-     (list client/patch calling_url (http-normal header) )))
+     (list client/patch calling_url (header-decorator form header) )))
 
 ;;;;;;;;;;;;;;global varialbes
 
@@ -215,8 +219,8 @@
 
 
 (defn init-api
-  ([server_env h ]
-    (api. (first server_env) (second server_env) h))
-  ([server_env h flags]
-    (api. (first server_env) (second server_env) h))
+  ([ [ url stream-url ] h ]
+    (api. url stream-url h))
+  ([ [ url stream-url ] h flags]
+    (api. url stream-url h))
     )
