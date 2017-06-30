@@ -20,5 +20,24 @@
   ))
 
 
+(defmacro http-body-form [ f h ]
+  {:as :json :body f :headers h :content-type :json :throw-exceptions false})
+
+(defmacro http-normal [ h ]
+  {:as :json :headers h :content-type :json :throw-exceptions false})
 
 
+
+(defmacro tt
+  ([ h ]
+   {:as :json :headers h :content-type :json :throw-exceptions false})
+  ([ f h ]
+    (list assoc (tt  h) :body f)
+   ))
+
+
+
+(tt "dadf")
+
+
+(tt "dadf" "dafdbbbb")
