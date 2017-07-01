@@ -69,8 +69,9 @@
 
 
 (defprotocol instrument_protocol
-  (get-current-price [x cur])
-  (get-instrument-history [x cur] [x cur params]))
+  (get-instrument-history [x cur] [x cur params])
+  (get-orderbook [x cur ] [x cur t])
+  (get-positionbook [x cur ] [x cur t]))
 
 (defprotocol account_protocol
   (get-accounts [x])
@@ -119,6 +120,14 @@
     "get history candles of a instrument"
     (let [opt_str (params2query params) ]
       (GET (str rest_url "/v3/instruments/" inst "/candles?" opt_str ) header)))
+  (get-orderbook [x inst]
+      (GET (str rest_url "/v3/instruments/" inst "orderBook") header))
+  (get-orderbook [x inst t]
+      (GET (str rest_url "/v3/instruments/" inst "orderBook?" (params2query t)) header))
+  (get-positionbook [x inst]
+      (GET (str rest_url "/v3/instruments/" inst "positionBook") header))
+  (get-positionbook [x inst t]
+      (GET (str rest_url "/v3/instruments/" inst "positionBook?" (params2query t)) header))
 
   account_protocol
   (get-accounts [ x]
@@ -141,16 +150,15 @@
     (let [base_cmd  {:instrument  inst :units units :side side :type type}
           exe_cmd (merge base_cmd params)
           order (json/generate-string {:order exe_cmd})]
-      ;order
       (POST (str rest_url "/v3/accounts/" id "/orders") order header)))
   (get-orders-by-account [x id ]
     (GET (str rest_url "/v3/accounts/" id "/orders" ) header))
   (get-orders-by-account [x id params]
     (GET (str rest_url "/v3/accounts/" id "/orders?" (params2query params) ) header))
+  (get-pending-orders [x id]
+    (GET (str rest_url "/v3/accounts/" id "/pendingOrders" ) header))
   (get-order-info [x id o_id]
     (GET (str rest_url "/v3/accounts/" id "/orders/" o_id) header))
-  (get-pending-orders [x id]
-      (GET (str rest_url "/v3/accounts/" id "/pendingOrders" ) header))
   (replace-order [x id o_id params]
     (PUT (str rest_url "/v3/accounts/" id "/orders/" o_id) params header))
   (cancel-order [x id o_id]
