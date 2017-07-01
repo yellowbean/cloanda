@@ -180,20 +180,20 @@
 
   transaction_protocol
   (get-txn-history [x id params]
-    (GET (str rest_url "/v3/accounts/" id "/transactions" (params2query params) ) header))
+    (GET (str rest_url "/v3/accounts/" id "/transactions?" (params2query params) ) header))
   (get-txn-info [x id t_id]
     (GET (str rest_url "/v3/accounts/" id "/transactions/" t_id) header))
   (get-txn-range [x id params]
-    (GET (str rest_url "/v3/accounts/" id "/transactions/idrange" (params2query params) ) header))
+    (GET (str rest_url "/v3/accounts/" id "/transactions/idrange?" (params2query params) ) header))
   (get-txn-since [x id params]
-    (GET (str rest_url "/v3/accounts/" id "/transactions/sinceid" (params2query params) ) header))
+    (GET (str rest_url "/v3/accounts/" id "/transactions/sinceid?" (params2query params) ) header))
   (get-txn-stream [x id params]
-    (GET (str stream_url "/v3/accounts/" id "/transactions/stream" (params2query params) ) header)    )
+    (GET (str stream_url "/v3/accounts/" id "/transactions/stream?" (params2query params) ) header)    )
   pricing_protocol
   (get-pricing-inst [x id params]
-    (GET (str rest_url "/v3/accounts/" id "/pricing" (params2query params)) header))
+    (GET (str rest_url "/v3/accounts/" id "/pricing?" (params2query params)) header))
   (get-pricing-stream [x id params]
-    (GET (str stream_url "/v3/accounts/" id "/pricing/stream" (params2query params)) header)))
+    (GET (str stream_url "/v3/accounts/" id "/pricing/stream?" (params2query params)) header)))
 
   ;(get-account-history [x a_id]
   ;  (GET (str rest_url "/v1/accounts/" a_id "/alltransactions/") header))
