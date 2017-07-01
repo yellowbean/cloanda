@@ -66,55 +66,53 @@ The clojure wrapper for OANDA REST API
     ;;Get all available trading instruments
     (.get-account-instruments oanda_api "account id")
     ;; response
-    ;; {:instruments: {:instrument "USD_CZK", :displayName "USD/CZK", :pip "0.0001", :maxTradeUnits 10000000}...}
-
+    ;; {:instruments [{:tradeUnitsPrecision 0,:minimumTradeSize "1",:maximumPositionSize "0",   :displayName "EUR/DKK",:pipLocation -4,:name "EUR_DKK",:maximumTrailingStopDistance "1.00000",                :type "CURRENCY",..............
 
     ;; Get current quote for a given instrument
-    (.get-current-price api ["EUR_USD"])
+    (.get-pricing-inst oanda_api "account id" {"instruments" "EUR_USD"})
     ;; response
-    ;; {:prices [{:instrument "EUR_USD", :time "1442495217874957", :bid 1.24068, :ask 1.24082}]}
+    ;; {:prices [{:bids [{:price "1.14211", :liquidity 10000000}],:instrument "EUR_USD",               :closeoutBid "1.14196",
 
-    (.get-instrument-history api "EUR_USD" )
+    (.get-instrument-history oanda_api "EUR_USD" )
     ;; Get history prices
     ;; get history prices of instrument "EUR_USD"
     ;; by default it will return 500 periods & 5 seconds as granularity
 
     ;; getting EUR/USD last 15 ticks with granularity = 5 minutes
-    (.get-instrument-history api "EUR_USD" {"count" "5" "granularity" "M5"})
+    (.get-instrument-history oanda_api "EUR_USD" {"count" "5" "granularity" "M5"})
     ;; response
     ;; {:instrument "EUR_USD", :granularity "S5", :candles [{:highBid 1.24052, :time "1442495330000000", :lowBid 1.24052, :openAsk 1.24066, :closeAsk 1.24066, :openBid 1.24052, :volume 1, :highAsk 1.24066, :complete true, :closeBid 1.24052, :lowAsk 1.24066} {:highBid 1.24052, :time "1442495335000000", :lowBid 1.24044, :openAsk 1.24065, :closeAsk 1.24063, :openBid 1.24052, :volume 9, :highAsk 1.24066, :complete true, :closeBid 1.24044, :lowAsk 1.24063} {:highBid 1.24045, :time "1442495340000000", :lowBid 1.24044, :openAsk 1.24061, :closeAsk 1.24061, :openBid 1.24045, :volume 2, :highAsk 1.24061, :complete false, :closeBid 1.24044, :lowAsk 1.24061}]}
 
     ;; getting 50 periods  by passing an option map
-    (.get-instrument-history api "EUR_USD" {"count" 50})
+    (.get-instrument-history oanda_api "EUR_USD" {"count" 50})
 
     ;; map can contains more than one parameter, "D" stands for "Day"
-    (.get-instrument-history api "EUR_USD" {"count" 50 "granularity" "D"})
+    (.get-instrument-history oanda_api "EUR_USD" {"count" 50 "granularity" "D"})
 
 ### Account Management
     ;; get all accounts associate with current login
-    (.get-accounts api)
+    (.get-accounts oanda_api)
     ;; response
     ;; .... :body {:accounts [{:id "ACCOUNT ID", :tags []}]} ....
 
     ;; get all tradable instruments under a given account
-    (.get-account-instruments api "ACCOUNT ID")
+    (.get-account-instruments oanda_api "ACCOUNT ID")
 
     ;; get detail account information for given account id
-    (.get-account-info api "ACCOUNT ID")
+    (.get-account-info oanda_api "ACCOUNT ID")
     ;; response
     ;; {:marginUsed 0, :accountCurrency "USD", :accountName "Primary", :realizedPl 0, :unrealizedPl 0, :balance 100000, :marginAvail 100000, :openTrades 0, :accountId 8055333, :marginRate 0.05, :openOrders 0}
 
     ;; get summary account information for given account id
-    (.get-account-summary api "ACCOUNT ID")
+    (.get-account-summary oanda_api "ACCOUNT ID")
 
     ;; get current account state and changes since a transaction id
-    (.get-account-changes api "ACCOUNT ID")
-    (.get-account-changes api "ACCOUNT ID" {"sinceTransactionID" "1523"})
+    (.get-account-changes oanda_api "ACCOUNT ID" {"sinceTransactionID" "1523"})
 
 
 ### Order Management
     ;; list all orders under a account
-    (.get-orders-by-account api  "ACCOUNT ID")
+    (.get-orders-by-account oanda_api  "ACCOUNT ID")
 
     ;; place an buy market order
     (.create-order api "ACCOUNT ID" "EUR_USD" "1000" "buy" "MARKET" {})
