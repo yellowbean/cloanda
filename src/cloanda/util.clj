@@ -1,9 +1,8 @@
 (ns cloanda.util
     (:require [clojure.string :as string]
               [cheshire.core :as json]
-              )
-    (:import [org.apache.commons.math3.stat.descriptive.moment Variance Mean]
-             [org.apache.commons.math3.stat.regression SimpleRegression]))
+              [clj-time.format :as fmt]
+              ))
 
 (defn get-resp [x]
  (json/parse-string (:body x)))
@@ -26,33 +25,37 @@
     (extract-instrument-prices history-resp price-type :array))
   ([ history-resp price-type t]
     (let [ candles (get-in history-resp [:body :candles])
-          prices (pmap #(get-in % [:mid price-type]) candles)
-          prices_in_double (pmap #(Double. %) prices)
+           prices (map #(get-in % [:mid price-type]) candles)
+           prices_in_double (map #(Double. %) prices)
           ]
          (cond
-               (= t :array) (into-array Double/TYPE prices_in_double)
+               ;(= t :array) (into-array Double/TYPE prices_in_double)
+               (= t :array) JsonIterator.deserialize(prices, Double[].class);
                (= t :list) prices_in_double
                )
          ))
 )
 
-(defn cal-variance [ d ]
-  "Caculate variance of a given double array"
-  (let [ v (Variance. ) ]
-    (.evaluate v d)))
 
-(defn cal-mean [ d ]
-  "Caculate mean of a given double array"
-  ( let [ m (Mean. )
-          leng (alength d)]
-    (.evaluate m  d 0 leng)))
+(def custom-formatter (fmt/formatter :date-time))
+(defn t2mfe [x] (fmt/parse custom-formatter x))
 
-(defn get-simple-regression [d]
-  "Get a Simple Regression"
-  (let [r (SimpleRegression. )
-        leng (alength d)]
-        (doseq [ i (range leng)]
-          (.addData r i (aget d i)))
-        r
-        )
-  )
+(defn extract-times
+      ([ history-resp ]
+        (let [ cdls (get-in history-resp [:body :candles])
+
+              ]
+             (map #(t2mfe (:time %)) cdls))
+        ))
+
+
+(defn init-ts
+      ([ history-resp ]
+        (let [ ps (extract-instrument-prices history-resp)
+               times (extract-times history-resp)
+              ])
+        (ts. ps times)
+        ))
+
+
+(defrecord ts [ time value ])

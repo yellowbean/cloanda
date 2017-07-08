@@ -13,7 +13,7 @@ The clojure wrapper for OANDA REST API
 - [Reference](#reference)
  - [Setup Header ](#setup-header)
  - [Initiate api Instance](#initiate-api-instance)
- - [Rate Management](#rate-management)
+ - [Instrument Management](#instrument-management)
  - [Account Management](#account-management)
  - [Order Management](#order-management)
  - [Trade Management](#trade-management)

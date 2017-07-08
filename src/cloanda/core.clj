@@ -40,19 +40,16 @@
 
 ;;;;;;;;;;;;;;global varialbes
 
-(def server_env (hash-map
-                        :practice ["https://api-fxpractice.oanda.com" "https://stream-fxpractice.oanda.com"]
-                        :production ["https://api-fxtrade.oanda.com" "https://stream-fxtrade.oanda.com/"]))
-
-
+(def server_env
+  (hash-map
+    :practice ["https://api-fxpractice.oanda.com" "https://stream-fxpractice.oanda.com"]
+    :production ["https://api-fxtrade.oanda.com" "https://stream-fxtrade.oanda.com/"]))
 
 ;;;;;;;;;;;;;
 (defn gen-headers [ ^String token]
     "To generate authorization token for headers"
     (let [ auth (str "Bearer " token)]
      {"Authorization" auth}))
-
-
 
 (defn read-stream [^java.io.FilterInputStream x]
   (loop [ r (.read x)
@@ -114,7 +111,7 @@
   (get-pricing-stream [x id params]))
 
 
-(defrecord api [ rest_url stream_url header]
+(defrecord api [ rest_url stream_url header ]
   instrument_protocol
   (get-instrument-history [ x inst params ]
     "get history candles of a instrument"
@@ -196,39 +193,16 @@
   (get-txn-since [x id params]
     (GET (str rest_url "/v3/accounts/" id "/transactions/sinceid?" (params2query params) ) header))
   (get-txn-stream [x id params]
-    (GET (str stream_url "/v3/accounts/" id "/transactions/stream?" (params2query params) ) header)    )
+    (GET (str stream_url "/v3/accounts/" id "/transactions/stream?" (params2query params) ) header))
+
   pricing_protocol
   (get-pricing-inst [x id params]
     (GET (str rest_url "/v3/accounts/" id "/pricing?" (params2query params)) header))
   (get-pricing-stream [x id params]
     (GET (str stream_url "/v3/accounts/" id "/pricing/stream?" (params2query params)) header)))
 
-  ;(get-account-history [x a_id]
-  ;  (GET (str rest_url "/v1/accounts/" a_id "/alltransactions/") header))
-
-  ;forex_lab_protocol
-  ;(get-calendar [x inst period]
-  ;  (GET (str rest_url "/labs/v1/calendar?instrument=" inst "&period=" period) header))
-  ;(hist-pos-ratios [x inst period]
-  ;  (GET (str rest_url "/labs/v1/historical_position_ratios?instrument=" inst "&period=" period) header))
-  ;(get-spreads [x inst period]
-  ;  (GET (str rest_url "/labs/v1/spreads?instrument=" inst "&period=" period) header))
-  ;(get-cot [x inst]
-  ;  (GET (str rest_url "/labs/v1/commitments_of_traders?instrument=" inst) header))
-  ;(get-order-book [x inst period]
-  ;  (GET (str rest_url "/labs/v1/orderbook_data?instrument=" inst "&period=" period) header))
-
-  ;streaming_protocol
-  ;(rate-stream [x a_id inst]
-  ;  (:body (client/get (str stream_url "/v1/prices?accountId=" a_id "&instruments=" (string/join "%2C" inst)) {:as :stream :headers header})))
-;
-  ;(event-stream [x]
-  ;  (:body (client/get (str stream_url "/v1/events") {:as :stream  :headers header}))))
 
 
 (defn init-api
-  ([ [ url stream-url ] h ]
+  [ [ url stream-url ] h ]
     (api. url stream-url h))
-  ([ [ url stream-url ] h flags]
-    (api. url stream-url h))
-    )
