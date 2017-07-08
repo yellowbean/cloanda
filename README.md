@@ -19,6 +19,7 @@ The clojure wrapper for OANDA REST API
  - [Trade Management](#trade-management)
  - [Position Management](#position-management)
  - [Transaction Management](#transaction-management)
+- [Utility Functions] (#utility-functions)
 - [Development Reference](#development-reference)
 
 
@@ -173,7 +174,13 @@ The clojure wrapper for OANDA REST API
     (.get-account-history api account_id)
 
 ### Pricing
+    ;; get pricing information for a specified list of instruments within an Account
+    (.get-pricing-int api accound_id {"instruments" ""} )
+    
+    ;; get a stream of account pricies starting from when the request is made
+    (.get-pricing-stream api accound_id {"instruments" ""} )
 
+### Utility Functions
 
 ## Development Reference
 
