@@ -19,6 +19,7 @@ The clojure wrapper for OANDA REST API
  - [Trade Management](#trade-management)
  - [Position Management](#position-management)
  - [Transaction Management](#transaction-management)
+ - [Pricing](#pricing)
 - [Utility Functions] (#utility-functions)
 - [Development Reference](#development-reference)
 
@@ -195,5 +196,5 @@ Please drop an email to always.zhang@gmail.com
 
 * No quality guarantee for any functionality or effectiveness or correct mapping of OANDA API.
 * Any user shall use this library by his/her own discretion and be responsible for any losses caused by this library.
-* Copyright © 2015/2016 Xiaoyu
+* Copyright © 2015/2016/2017 Xiaoyu
 * Distributed under the Eclipse Public License either version 1.0 or any later version.
